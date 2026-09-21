@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>cuồng phim</title>
+</head>
+<body><xt:code><div class="episode-player-container">
+
+    <div class="movie-breadcrumb">
+        <a href="/">🏠 Trang chủ</a>
+        <span>›</span>
+        <span id="movie-title">Đang tải...</span>
+    </div>
+
+    <div class="video-player-wrapper">
+        <iframe id="video-player" src="about:blank" frameborder="0" scrolling="0" allowfullscreen="allowfullscreen"></iframe>
+        <div id="player-placeholder">Vui lòng chọn một tập để xem</div>
+    </div>
+
+    <h3 class="episode-list-title">Danh sách tập</h3>
+    <div id="episode-list" class="episode-grid"></div>
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+(function () {
+    var id = (location.search.match(/[?&]id=([^&]+)/) || [])[1];
+    var titleEl = document.getElementById('movie-title');
+    var list = document.getElementById('episode-list');
+    var player = document.getElementById('video-player');
+    var ph = document.getElementById('player-placeholder');
+
+    if (!id) {
+        if (titleEl) titleEl.innerHTML = 'Thiếu ID phim';
+        if (list) list.innerHTML = '<div style="padding:10px;color:#888;">URL thiếu ?id=</div>';
+        return;
+    }
+
+    // Load file <id>.js động
+    var s = document.createElement('script');
+    s.src = id + '.js';
+    s.onload = function () {
+        if (typeof EPISODES === 'undefined') {
+            if (list) list.innerHTML = '<div style="padding:10px;color:#888;">File ' + id + '.js không có dữ liệu.</div>';
+            return;
+        }
+        if (titleEl) titleEl.innerHTML = (typeof TITLE !== 'undefined') ? TITLE : id;
+        renderEpisodes(EPISODES);
+    };
+    s.onerror = function () {
+        if (list) list.innerHTML = '<div style="padding:10px;color:#888;">Không tìm thấy phim (thiếu file ' + id + '.js).</div>';
+        if (titleEl) titleEl.innerHTML = 'Không tìm thấy phim';
+    };
+    document.head.appendChild(s);
+
+    function renderEpisodes(arr) {
+        for (var i = 0; i < arr.length; i++) {
+            var p = arr[i].split('|');
+            var b = document.createElement('a');
+            b.href = 'javascript:void(0)';
+            b.className = 'episode-button';
+            b.innerHTML = p[0];
+            b.setAttribute('data-url', p[1]);
+            list.appendChild(b);
+        }
+
+        list.onclick = function (e) {
+            e = e || window.event;
+            var t = e.target || e.srcElement;
+            if (t.className.indexOf('episode-button') === -1) return;
+            if (player) player.src = t.getAttribute('data-url');
+            if (ph) ph.style.display = 'none';
+            var act = document.querySelector('.episode-button.active');
+            if (act) act.className = act.className.replace(' active', '');
+            t.className += ' active';
+        };
+    }
+})();
+//]]>
+</script></xt:code>
+    <div data-xtcontainer="container" class="xt_container">
+    </div>
+</body>
+</html>
