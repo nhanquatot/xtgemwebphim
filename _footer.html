@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="application/vnd.wap.xhtml+xml; charset=utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>XtGem.com</title>
+</head>
+<body><xt:code><script>
+(function () {
+    function fixBodyWidth() {
+        // Gỡ max-width 400px mà XtGem ép vào body
+        document.body.style.setProperty('max-width', 'none', 'important');
+        document.body.style.setProperty('width', '100%', 'important');
+        document.body.style.setProperty('margin', '0', 'important');
+    }
+
+    // Chạy ngay lập tức
+    fixBodyWidth();
+
+    // Chạy lại sau khi DOM sẵn sàng
+    document.addEventListener('DOMContentLoaded', fixBodyWidth);
+
+    // Chạy lại sau khi toàn bộ trang load xong (XtGem gán trễ)
+    window.addEventListener('load', fixBodyWidth);
+
+    // Chạy lại vài lần với delay khác nhau để chắc chắn đè được
+    setTimeout(fixBodyWidth, 100);
+    setTimeout(fixBodyWidth, 500);
+    setTimeout(fixBodyWidth, 1000);
+    setTimeout(fixBodyWidth, 2000);
+
+    // Theo dõi nếu XtGem gán lại thì gỡ tiếp (MutationObserver)
+    var observer = new MutationObserver(function () {
+        if (document.body.style.maxWidth === '400px') {
+            fixBodyWidth();
+        }
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ['style'] });
+})();
+</script></xt:code>
+    
+</body>
+</html>
